@@ -43,7 +43,7 @@ export const commentBank = {
     }
   },
   language: {
-    TransferableSkills: {
+    'Transferable Skills': {
       1: '*N* is learning how to make use of the elements of style and conventions. *P* is creating short writing pieces and oral presentations that *R* audience finds interesting.',
       2: '*N* is learning how to make use of the elements of style and conventions. *P* is creating short writing pieces and oral presentations that *R* audience finds interesting.',
       3: '*N* effectively uses strategies to increase comprehension during reading (e.g. summarizing) and listening (e.g. annotating) activities. *P* uses the elements of style and conventions to create engaging oral presentations this term, and has shown progress in creating *R* own texts.',
