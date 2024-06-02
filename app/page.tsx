@@ -22,7 +22,7 @@ export default function Page() {
   return (
     <TextContent.Provider value={{ text, setText }}>
       <ConfettiSwitch.Provider value={{ confetti, setConfetti }}>
-        <div className="grid grid-cols-2 h-screen gap-4" style={{ gridTemplateColumns: '1fr 3fr' }}>
+        <div className="md:grid md:h-screen gap-4 md:grid-cols-[1fr_3fr] flex flex-col">
           <div className="col-span-1">
             <Card className="w-full ">
               <CardHeader>
