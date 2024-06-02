@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { generateText, streamText } from 'ai';
+import { generateText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -14,10 +14,13 @@ export async function POST(req: Request) {
       prompt: `Improve this comment. Make the feedback concise using a professional tone. Make the new comment 1400 characters or less. Don't include anything other than then new comment in the response. Heres the comment: ${text}`,
     });
   
-    // return result and send 200
     return new Response(result.text, { status: 200 });
   } catch (error) {
-    return new Response(error.message, { status: 500 });
+    if (error instanceof Error) {
+      return new Response(error.message, { status: 500 });
+    } else {
+      return new Response('An unknown error occurred.', { status: 500 });
+    }
   }
 
 }
