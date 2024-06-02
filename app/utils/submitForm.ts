@@ -38,10 +38,12 @@ class Handler {
   }
   createComment() {
     let comment = '';
+    console.log(this.data);
     for (const [key, value] of this.data.entries()) {
-      // @ts-ignore-next-line - Im probably being dumb
-      const sectionComment = this.commentBank[this.subject][key][value] + ' ';
-      comment += sectionComment;
+      if (value) {
+        const sectionComment = this.commentBank[this.subject][key][value] + ' ';
+        comment += sectionComment;
+      }
     }
 
     comment = comment.trim();
