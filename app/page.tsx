@@ -10,6 +10,7 @@ import CommentBox from "./components/CommentBox/CommentBox"
 import { TextContent } from "./contexts/TextContext"
 import dynamic from "next/dynamic"
 import { ConfettiSwitch } from "./contexts/ConfettiContext"
+import LearningSkills from "./components/subjects/LearningSkills"
 const Confetti = dynamic(() => import('@/components/Confetti/Confetti'), { ssr: false })
 
 
@@ -18,7 +19,7 @@ export default function Page() {
   const [text, setText] = useState('');
   const [confetti, setConfetti] = useState(false)
   const [activeTab, setActiveTab] = useState("math")
-  const subjectForm = activeTab === "math" ? <MathForm /> : activeTab === "language" ? <LanguageForm /> : <ScienceForm />
+  const subjectForm = activeTab === "math" ? <MathForm /> : activeTab === "language" ? <LanguageForm />  :  activeTab === 'science' ? <ScienceForm /> : <LearningSkills />
   return (
     <TextContent.Provider value={{ text, setText }}>
       <ConfettiSwitch.Provider value={{ confetti, setConfetti }}>
@@ -34,6 +35,7 @@ export default function Page() {
                   <TabsTrigger value="math">Math</TabsTrigger>
                   <TabsTrigger value="language">Language</TabsTrigger>
                   <TabsTrigger value="science">Science</TabsTrigger>
+                  <TabsTrigger value="learning skills">Learning Skills</TabsTrigger>
                 </TabsList>
                 {subjectForm}
               </Tabs>
