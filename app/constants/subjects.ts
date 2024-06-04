@@ -13,12 +13,19 @@ export const standardLearningSkillLevels: [string, string][] = [
   ['S', 'S 😕'],
   ['N', 'N 😢'],
 ];
+const nextStepsSkillLevels: [string, string][] = [
+  ['1', 'Active Learner/ Helper'],
+  ['2', 'Extra-Curriculars'],
+  ['3', 'Leader- Help Others'],
+  ['4', 'Leader- Community Involvement'],
+  ['5', 'Other Subject Interets'],
+]
 export const subjects = ['math', 'language', 'science', 'learning skills'] as const;
 export type Subject = typeof subjects[number];
-export const mathSections = [['SEL', createLevels(standardSubjectLevels)], ['Operations', createLevels(standardSubjectLevels)], ['Spatial', createLevels(standardSubjectLevels)], ['Algebra', createLevels(standardSubjectLevels)]] as const;
+export const mathSections = [['SEL', createLevels(standardSubjectLevels)], ['Operations', createLevels(standardSubjectLevels)], ['Spatial', createLevels(standardSubjectLevels)], ['Algebra', createLevels(standardSubjectLevels, [2,1,1,1])]] as const;
 export const languageSections = [['Transferable Skills', createLevels(standardSubjectLevels)], ['Opinion', createLevels(standardSubjectLevels)], ['Research + Reporting', createLevels(standardSubjectLevels)], ['Reading', createLevels(standardSubjectLevels)], ['Writing', createLevels(standardSubjectLevels)], ['Comprehension + Critical Thinking', createLevels(standardSubjectLevels)], ['Next Steps', createLevels(standardSubjectLevels)]] as const;
 export const scienceSections = [['SEL', createLevels(standardSubjectLevels)], ['Conservation of Energy', createLevels(standardSubjectLevels)], ['Structures/Mechanisms', createLevels(standardSubjectLevels)], ['Matter and Energy', createLevels(standardSubjectLevels)], ['Next Step', createLevels(standardSubjectLevels)]] as const;
-export const learningSkillSections = [['Responsibility', createLevels(standardLearningSkillLevels, [1,2,1,5])], ['Organization', createLevels(standardLearningSkillLevels)]] as const;
+export const learningSkillSections = [['Personal Trait comments', createLevels(standardLearningSkillLevels,[4,4,4,3])], ['Responsability', createLevels(standardLearningSkillLevels, [3,3,3,2],)], ['Independent Work', createLevels(standardLearningSkillLevels, [3,3,3,1])], ['Initiative', createLevels(standardLearningSkillLevels, [4,4,3,4])], ['Organization', createLevels(standardLearningSkillLevels, [3,3,3,3])], ['Collaboration', createLevels(standardLearningSkillLevels, [5,5,5,5])], ['Self-Regulation', createLevels(standardLearningSkillLevels, [4,4,4,4])], ['Next Steps', createLevels(nextStepsSkillLevels, [1,1,1,1])]] as const;
 
 
 function createLevels(standardLevels: [string, string][], levels?: number[]): [string, string, number][]{

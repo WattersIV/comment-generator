@@ -1,4 +1,4 @@
-export async function handleUseGPT(text: string, setText: React.Dispatch<React.SetStateAction<string>>, startConfetti: () => void, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
+export async function handleUseGPT(text: string, setText: React.Dispatch<React.SetStateAction<string>>, startConfetti: () => void, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>, activeTab: string) {
   try {
     setIsLoading(true);
     const response = await fetch('/api/chat', {
@@ -6,7 +6,7 @@ export async function handleUseGPT(text: string, setText: React.Dispatch<React.S
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({text}),
+      body: JSON.stringify({text, activeTab}),
     });
     setText(await response.text());
     console.log('Confetti time!');

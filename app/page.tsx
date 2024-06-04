@@ -42,7 +42,7 @@ export default function Page() {
             </Card>
           </div>
           <div className="col-span-1">
-            <CommentBox />
+            <CommentBox activeTab={activeTab}/>
           </div>
         </div>
         <Confetti />
