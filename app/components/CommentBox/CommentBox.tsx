@@ -8,7 +8,7 @@ import { handleUseGPT } from "@/utils/handleUseGPT";
 import { ConfettiSwitch } from "@/contexts/ConfettiContext";
 
 
-export default function CommentBox() {
+export default function CommentBox({activeTab}: {activeTab: string}) {
   const { text, setText } = useContext(TextContent);
   const { setConfetti } = useContext(ConfettiSwitch)
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,7 @@ export default function CommentBox() {
         <Button
           variant="default"
           className="flex items-center gap-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-gray-50 transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300 w-fit m-auto"
-          onClick={() => handleUseGPT(text, setText, () => setConfetti(true), setIsLoading)}
+          onClick={() => handleUseGPT(text, setText, () => setConfetti(true), setIsLoading, activeTab)}
         >
           {isLoading ? (
             <XIcon className="h-5 w-5 animate-spin" />

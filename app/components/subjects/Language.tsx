@@ -15,10 +15,10 @@ export default function LanguageForm() {
       <TabsContent value="language">
         <CardContent className="space-y-6">
           <div className="grid gap-4">
-            {languageSections.map((section) => {
+            {languageSections.map(([section, levels]) => {
               const title = section.charAt(0).toUpperCase() + section.slice(1);
               return (
-                <DropDownOption key={section} section={section} title={title} />
+                <DropDownOption key={section} section={section} title={title} levels={levels} />
               )
             })}
           </div>

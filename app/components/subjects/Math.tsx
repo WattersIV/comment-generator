@@ -14,11 +14,12 @@ export default function MathForm() {
       <TabsContent value="math">
         <CardContent className="space-y-6">
           <div className="grid gap-4">
-            {mathSections.map((section) => {
+            {mathSections.map(([section, levels]) => {
               const title = section.charAt(0).toUpperCase() + section.slice(1);
-              return(
-                <DropDownOption key={section} section={section} title={title} />
-            )})}
+              return (
+                <DropDownOption key={section} section={section} title={title} levels={levels} />
+              )
+            })}
           </div>
         </CardContent>
       </TabsContent>

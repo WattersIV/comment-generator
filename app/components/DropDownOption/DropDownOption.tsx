@@ -1,26 +1,35 @@
 import { Sections } from "@/constants/subjects";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
+import { SelectLabel } from "@radix-ui/react-select";
 
-export default function DropDownOption({ section, title}: { section: Sections[number], title: string }) {
+export default function DropDownOption({ section, title, levels }: { section: Sections[number], title: string, levels: [string, string, number][] }) {
   return (
     <div key={section}>
-    <Label className="font-semibold">{title}</Label>
-    <div className="grid grid-cols-2 gap-2">
-      <Select name={section}>
-        <SelectTrigger id={`${section}-level`}>
-          <SelectValue placeholder="Select level" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="4">Level 4 🌟</SelectItem>
-          <SelectItem value="3">Level 3 ✔️</SelectItem>
-          <SelectItem value="2">Level 2 😕</SelectItem>
-          <SelectItem value="1">Level 1 😢</SelectItem>
-          <SelectItem value="incomplete">Incomplete 👺</SelectItem>
-        </SelectContent>
-      </Select>
-      <p className="text-sm text-gray-500 dark:text-gray-400">{title} skills</p>
+      <Label className="font-semibold">{title}</Label>
+      <div className="grid grid-cols-2 gap-2">
+        <Select name={section}>
+          <SelectTrigger id={`${section}-level`}>
+            <SelectValue placeholder="Select level" />
+          </SelectTrigger>
+          <SelectContent>
+            {levels.map(([level, label, subsections]) => {
+              return (
+                <SelectGroup key={level}>
+                  <SelectLabel>{label}</SelectLabel>
+                  {Array.from({ length: subsections }, (_, i) => {
+                    const itemName = subsections > 1 ? `${label} ${i + 1}` : `${label}`;
+                    return (
+                      <SelectItem key={i} value={`${level}-${i + 1}`}>{itemName}</SelectItem>
+                    )
+                  })}
+                </SelectGroup>
+              )
+            })}
+          </SelectContent>
+        </Select>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{title} skills</p>
+      </div>
     </div>
-  </div>
   )
 }
