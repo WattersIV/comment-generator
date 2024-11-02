@@ -23,9 +23,10 @@ export function handleSubmit(event: React.FormEvent<HTMLFormElement>, subject: S
       setText(science.createComment())
       break
     case 'learning skills':
+      const openingText = `In keeping with our Board's Spiritual theme, "We are called to open doors, build bridges, and nourish new beginnings," the school's learning skills focus for this reporting period has been to highlight and strengthen responsibility and organization with a board-wide focus on the Global Competency of critical thinking.`;
       const learningSkills = new LearningSkillStrategy()
       learningSkills.getData(data as Record<string, string>)
-      setText(learningSkills.createComment())
+      setText(`${openingText} \n\n ${learningSkills.createComment()}`)
       break
   }
    
@@ -44,6 +45,7 @@ class Handler {
   createComment() {
     let comment = '';
     for (const [key, value] of this.data.entries()) {
+      console.log(key, value)
       if (value) {
         const sectionComment = this.commentBank[this.subject][key][value] + ' ';
         comment += sectionComment;
@@ -51,6 +53,7 @@ class Handler {
     }
 
     comment = comment.trim();
+    comment += ' S.W.';
     return comment;
   }
 }

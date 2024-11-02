@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       case 'learning skills': {
         const minCharacters = 1600;
         const maxCharacters = 2000;
-        prompt = `Improve this learning skill comment. Make the feedback concise using a professional tone. Make the new comment max ${maxCharacters}, min ${minCharacters} characters. Don't include anything other than then new comment in the response. Heres the comment: ${text}`;
+        prompt = `Improve this learning skill comment. Make the feedback concise using a professional tone. Do not edit the first paragraph. Make the new comment max ${maxCharacters}, min ${minCharacters} characters. Don't include anything other than then new comment in the response. Heres the comment: ${text}`;
         break;
       }
       default: {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     const result = await generateText({
       model: openai('gpt-3.5-turbo-16k'),
-      system: 'You are an Ontario, Canada grade 5 teacher refining a report card comment for a student. Be professional and encouraging. *N* is a students name. *H*self is himself/herself. *R* is his/her. *P* is he/she. *H* is him/her. Use these as placeholders.',
+      system: 'You are an Ontario, Canada grade 6 teacher refining a report card comment for a student. Be professional and encouraging. *N* is a students name. *H*self is himself/herself. *R* is his/her. *P* is he/she. *H* is him/her. Use these as placeholders.',
       prompt,
     });
   

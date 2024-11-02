@@ -1,7 +1,6 @@
 import { Sections } from "@/constants/subjects";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
-import { SelectLabel } from "@radix-ui/react-select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 export default function DropDownOption({ section, title, levels }: { section: Sections[number], title: string, levels: [string, string, number][] }) {
   return (
@@ -15,15 +14,14 @@ export default function DropDownOption({ section, title, levels }: { section: Se
           <SelectContent>
             {levels.map(([level, label, subsections]) => {
               return (
-                <SelectGroup key={level}>
-                  <SelectLabel>{label}</SelectLabel>
+                <>
                   {Array.from({ length: subsections }, (_, i) => {
                     const itemName = subsections > 1 ? `${label} ${i + 1}` : `${label}`;
                     return (
                       <SelectItem key={i} value={`${level}-${i + 1}`}>{itemName}</SelectItem>
                     )
                   })}
-                </SelectGroup>
+                </>
               )
             })}
           </SelectContent>
