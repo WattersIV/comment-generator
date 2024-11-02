@@ -3,6 +3,7 @@ import { Sections, Subject, languageSections, learningSkillSections, mathSection
 
 export function handleSubmit(event: React.FormEvent<HTMLFormElement>, subject: Subject, setText: React.Dispatch<React.SetStateAction<string>>) {
   event.preventDefault()
+  console.log('handling submit')
   const formData = new FormData(event.currentTarget)
   const data = Object.fromEntries(formData)
 
@@ -45,15 +46,14 @@ class Handler {
   createComment() {
     let comment = '';
     for (const [key, value] of this.data.entries()) {
-      console.log(key, value)
-      if (value) {
+      if (value && value !== 'null') {
         const sectionComment = this.commentBank[this.subject][key][value] + ' ';
         comment += sectionComment;
       }
     }
 
     comment = comment.trim();
-    comment += ' S.W.';
+    comment += ' SW';
     return comment;
   }
 }

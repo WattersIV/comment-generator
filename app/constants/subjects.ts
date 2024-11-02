@@ -53,9 +53,7 @@ export const sectionMapping = {
 
 
 function getLearningSkillSections(){
-  // Get Keys of commentBank['learning skills']
   const keys = Object.keys(commentBank['learning skills']);
-  // Create the sections array
   return keys.map(key => {
     let gradeData = [];
     const sectionData = [key, gradeData];
