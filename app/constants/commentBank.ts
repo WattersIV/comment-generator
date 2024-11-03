@@ -133,13 +133,13 @@ export const commentBank = {
     'Responsability - Agenda Deadlines': {
       'E-1': '*N* demonstrates responsibility by effectively keeping track of work and important dates. *H* completes all *R* work with great care and attention to detail, meeting all deadlines.',
       'G-1': '*N* demonstrates responsibility by keeping track of work and important dates. *H* completes *R* work with care and meets most deadlines.',
-      'S-1': '*N* demonstrates some responsibility when *H* completes *R* work with care, meeting some deadlines with frequent reminders. *N* is encouraged to more effectively ensure *H* knows what *H* needs to do each day to complete work on time.',
+      'S-1': '*N* demonstrates some responsibility when *P* completes *R* work with care, meeting some deadlines with frequent reminders. *N* is encouraged to more effectively ensure *P* knows what *P* needs to do each day to complete work on time.',
       'N-1': '*N* rarely meets deadlines and work is submitted with little care and attention to detail. *N* is encouraged to use *R* notes and Hapara at home and school to keep track of assignments and deadlines.',
     },
     'Responsability - Class Jobs': {
       'E-1': '*N* has begun demonstrating a commitment to fulfilling *R* class job every day as well as helping others in a Grade 6 leadership role. *H* needs no reminders to complete *R* responsibilities in the class and school.',
       'G-1': 'Since the year has begun, *N* has been committed to fulfilling *R* leadership roles. *H* needs few reminders to complete *R* responsibilities in the classroom, and is beginning to meet the expectations of a Grade 6 role model at school.',
-      'S-1': 'This fall, *N* has been willing to help with class jobs when asked. With reminders needed, *H* is able to complete *R* responsibilities in the classroom.*N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as well as monitor *P* individual responsibilities without reminders from others.',
+      'S-1': 'This fall, *N* has been willing to help with class jobs when asked. With reminders needed, *P* is able to complete *R* responsibilities in the classroom. *N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as well as monitor *P* individual responsibilities without reminders from others.',
       'N-1': 'In our first months of Grade 6, *N* has needed to be asked frequently to help with essential class jobs and expectations. *H* struggles to complete *R* responsibilities in the classroom even with reminders. *N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as the year progresses.',
     },
     'Independent Work - Distractibility/Completion': {

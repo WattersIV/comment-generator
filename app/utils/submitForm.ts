@@ -27,7 +27,7 @@ export function handleSubmit(event: React.FormEvent<HTMLFormElement>, subject: S
       const openingText = `In keeping with our Board's Spiritual theme, "We are called to open doors, build bridges, and nourish new beginnings," the school's learning skills focus for this reporting period has been to highlight and strengthen responsibility and organization with a board-wide focus on the Global Competency of critical thinking.`;
       const learningSkills = new LearningSkillStrategy()
       learningSkills.getData(data as Record<string, string>)
-      setText(`${openingText} \n\n ${learningSkills.createComment()}`)
+      setText(`${openingText} ${learningSkills.createComment()}`)
       break
   }
    
