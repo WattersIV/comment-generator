@@ -139,7 +139,7 @@ export const commentBank = {
     'Responsability - Class Jobs': {
       'E-1': '*N* has begun demonstrating a commitment to fulfilling *R* class job every day as well as helping others in a Grade 6 leadership role. *H* needs no reminders to complete *R* responsibilities in the class and school.',
       'G-1': 'Since the year has begun, *N* has been committed to fulfilling *R* leadership roles. *H* needs few reminders to complete *R* responsibilities in the classroom, and is beginning to meet the expectations of a Grade 6 role model at school.',
-      'S-1': 'This fall, *N* has been willing to help with class jobs when asked. With reminders needed, *P* is able to complete *R* responsibilities in the classroom. *N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as well as monitor *P* individual responsibilities without reminders from others.',
+      'S-1': 'This fall, *N* has been willing to help with class jobs when asked. With reminders needed, *P* is able to complete *R* responsibilities in the classroom. *N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as well as monitor *R* individual responsibilities without reminders from others.',
       'N-1': 'In our first months of Grade 6, *N* has needed to be asked frequently to help with essential class jobs and expectations. *H* struggles to complete *R* responsibilities in the classroom even with reminders. *N* is encouraged to look for simple ways *H* can be helpful within the classroom and carry out these tasks as the year progresses.',
     },
     'Independent Work - Distractibility/Completion': {
