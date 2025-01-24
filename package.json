@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.18",
+    "@radix-ui/react-dropdown-menu": "^2.1.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.16",
     "ai": "^3.1.22",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
