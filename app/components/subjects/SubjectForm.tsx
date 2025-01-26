@@ -1,12 +1,9 @@
 import { CardContent } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import SubmitButton from '../SubmitButton/SubmitButton';
-import { scienceSections } from '@/constants/subjects';
-import { handleSubmit } from '@/utils/submitForm';
 import { useContext, useEffect, useState } from 'react';
 import { TextContent } from '@/contexts/TextContext';
 import DropDownOption from '@/components/DropDownOption/DropDownOption';
-import { create } from 'domain';
 type Sections = {
 	name: string;
 	children: {
@@ -31,10 +28,8 @@ export default function SubjectForm({
 	);
 
 	useEffect(() => {
-		console.log('RUNNING', subjectComments);
 		let comment = Object.values(subjectComments)
 			.map((comment) => {
-				console.log('comment', comment);
 				return comment;
 			})
 			.join(' ');
@@ -49,8 +44,6 @@ export default function SubjectForm({
 				const formData = new FormData(e.currentTarget);
 				const data = Object.fromEntries(formData.entries()) as { [k: string]: string };
 				const comment = createSubjectComment(data, subjectComments);
-				console.log(comment);
-				console.log('isEqual', Object.is(comment, subjectComments));
 				setSubjectComments(comment);
 			}}
 			id="learning-skills-form"
@@ -81,7 +74,8 @@ function createSubjectComment(
 	let comment = { ...subjectComments };
 	for (const [key, value] of Object.entries(data)) {
 		if (value && value !== 'null') {
-			comment[key] = value.trim();
+			const [level, commentValue] = value.split('|');
+			comment[key] = commentValue.trim();
 		}
 	}
 	return comment;

@@ -25,6 +25,7 @@ export default function DropDownOption({
 		const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
 		form.requestSubmit(button);
 	}
+
 	return (
 		<div key={section}>
 			<Label className="font-semibold">{title}</Label>
@@ -34,14 +35,17 @@ export default function DropDownOption({
 						<SelectValue placeholder="Select level" />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem key="null" value="null">
-							Null
-						</SelectItem>
-						{levels.map((level) => (
-							<SelectItem key={level.name} value={level.comment}>
-								{level.name}
-							</SelectItem>
-						))}
+						{levels.map((level) => {
+							if (level.comment === '') {
+								return null;
+							}
+							return (
+								// It forces value to be the key add name to be unique
+								<SelectItem key={level.name} value={`${level.name}|${level.comment}`}>
+									{level.name}
+								</SelectItem>
+							);
+						})}
 					</SelectContent>
 				</Select>
 				<p className="text-sm text-gray-500 dark:text-gray-400">{title} skills</p>
