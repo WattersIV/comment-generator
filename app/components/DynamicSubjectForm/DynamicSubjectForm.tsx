@@ -272,6 +272,7 @@ export default function DynamicSubjectForm({
 								variant="destructive"
 								size="icon"
 								onClick={() => removeSection(sectionIndex, section.name)}
+								className="ml-6"
 							>
 								<Trash2 className="h-4 w-4" />
 							</Button>
@@ -307,6 +308,7 @@ export default function DynamicSubjectForm({
 									variant="destructive"
 									size="icon"
 									onClick={() => removeLevel(sectionIndex, levelIndex, level.name)}
+									className="ml-6"
 								>
 									<Trash2 className="h-4 w-4" />
 								</Button>
