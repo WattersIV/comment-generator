@@ -28,17 +28,17 @@ export default function CommentBox({ activeTab }: { activeTab: string }) {
 	}
 
 	return (
-		<div className="grid gap-2 h-full" style={{ gridTemplateRows: '5fr 1fr' }}>
-			<div className="flex flex-col items-start gap-6 w-full flex-1">
+		<div className="grid gap-2 h-full" style={{ gridTemplateRows: '1fr auto' }}>
+			<div className="flex flex-col items-start gap-4 w-full flex-1">
 				<Textarea
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 					placeholder="Your text will be inserted here..."
-					className="w-full rounded-md border border-gray-300 p-4 text-base focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:focus:border-primary dark:focus:ring-primary"
+					className="w-full rounded-md border border-gray-300 p-4 text-base focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50 dark:focus:border-primary dark:focus:ring-primary min-h-[45vh] md:min-h-[60vh] max-h-[70vh]"
 				/>
-				<p>Character Count: {text.length}</p>
+				<p className="text-sm text-muted-foreground">Character Count: {text.length}</p>
 			</div>
-			<div className="flex content-between">
+			<div className="flex items-center justify-center gap-3 py-2">
 				<Button
 					variant="outline"
 					className="flex items-center gap-2 rounded-md px-4 py-2 text-base font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 w-fit m-auto"
