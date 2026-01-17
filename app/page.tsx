@@ -131,9 +131,9 @@ export default function Page() {
 	return (
 		<TextContent.Provider value={{ text, setText }}>
 			<ConfettiSwitch.Provider value={{ confetti, setConfetti }}>
-				<div className="md:grid gap-4 md:grid-cols-[1fr_3fr] flex flex-col min-h-full items-start">
-					<div className="col-span-1 overflow-auto">
-						<Card className="w-full max-h-[calc(100vh-160px)]">
+				<div className="md:grid gap-4 md:grid-cols-[1fr_3fr] flex flex-col h-full p-4 overflow-hidden">
+					<div className="col-span-1 overflow-y-auto overflow-x-hidden min-w-0">
+						<Card className="w-full">
 							<CardHeader>
 								<CardTitle>Comment Generator</CardTitle>
 								<DropdownMenuCheckboxes
@@ -154,10 +154,8 @@ export default function Page() {
 							</Tabs>
 						</Card>
 					</div>
-					<div className="col-span-1 overflow-auto">
-						<div className="max-h-[calc(100vh-160px)] overflow-auto">
-							<CommentBox activeTab={activeTab} />
-						</div>
+					<div className="col-span-1 overflow-y-auto overflow-x-hidden min-w-0">
+						<CommentBox activeTab={activeTab} />
 					</div>
 				</div>
 				<Confetti />

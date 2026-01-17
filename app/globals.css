@@ -71,9 +71,12 @@
 		@apply border-border;
 	}
 	html {
-		overflow-y: scroll;
+		height: 100%;
+		overflow-x: hidden;
 	}
 	body {
 		@apply bg-background text-foreground;
+		height: 100%;
+		overflow-x: hidden;
 	}
 }

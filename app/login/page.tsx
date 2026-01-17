@@ -11,13 +11,14 @@ export default function LoginPage() {
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-100 flex items-center justify-center p-4">
+		<div className="h-full w-full bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-100 flex items-center justify-center p-4 relative overflow-hidden">
 			{/* Background decorative elements */}
-			<div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-			<div className="absolute top-0 right-0 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-			<div className="absolute -bottom-8 left-1/2 w-96 h-96 bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+			<div className="absolute top-0 left-0 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+			<div className="absolute top-0 right-0 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+			<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
 			<div className="w-full max-w-md relative z-10">
 				{/* Header */}
@@ -65,16 +66,60 @@ export default function LoginPage() {
 								<Label htmlFor="password" className="text-slate-700 font-semibold">
 									Password
 								</Label>
-								<Input
-									id="password"
-									name="password"
-									type="password"
-									placeholder="••••••••"
-									required
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									className="h-11 px-4 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
-								/>
+								<div className="relative">
+									<Input
+										id="password"
+										name="password"
+										type={showPassword ? 'text' : 'password'}
+										placeholder="••••••••"
+										required
+										value={password}
+										onChange={(e) => setPassword(e.target.value)}
+										className="h-11 px-4 pr-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+									/>
+									<button
+										type="button"
+										onClick={() => setShowPassword((s) => !s)}
+										aria-label={showPassword ? 'Hide password' : 'Show password'}
+										className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+									>
+										{showPassword ? (
+											// eye-off icon
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												className="h-5 w-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+											>
+												<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+												<path d="M10.88 10.88C11.55 10.2 12.71 10 12 10c2.21 0 4 1.79 4 4 0 .71-.2 1.87-.88 2.88" />
+												<path d="M21.86 15.64a9.97 9.97 0 0 0-3.54-3.54" />
+												<path d="M2.14 8.36a10 10 0 0 0 3.64 3.64" />
+												<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7" />
+												<line x1="2" y1="2" x2="22" y2="22" />
+											</svg>
+										) : (
+											// eye icon
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												className="h-5 w-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+											>
+												<path d="M1.05 12C2.73 7.89 7 4 12 4c5 0 9.27 3.89 10.95 8-1.68 4.11-6 8-10.95 8-5 0-9.27-3.89-10.95-8z" />
+												<circle cx="12" cy="12" r="3" />
+											</svg>
+										)}
+									</button>
+								</div>
 							</div>
 
 							{/* Buttons */}
@@ -114,11 +159,6 @@ export default function LoginPage() {
 						</div>
 					</CardContent>
 				</Card>
-
-				{/* Footer Info */}
-				<div className="mt-8 text-center text-xs text-slate-500">
-					<p>Secure authentication powered by Supabase</p>
-				</div>
 			</div>
 
 			{/* CSS for animations */}
@@ -129,10 +169,10 @@ export default function LoginPage() {
 						transform: translate(0, 0) scale(1);
 					}
 					33% {
-						transform: translate(30px, -50px) scale(1.1);
+						transform: translate(15px, -25px) scale(1.05);
 					}
 					66% {
-						transform: translate(-20px, 20px) scale(0.9);
+						transform: translate(-10px, 10px) scale(0.95);
 					}
 				}
 

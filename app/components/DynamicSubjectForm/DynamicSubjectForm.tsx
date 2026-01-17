@@ -224,7 +224,7 @@ export default function DynamicSubjectForm({
 	}
 
 	return (
-		<form className="space-y-6 max-w-2xl mx-auto p-6" onSubmit={handleSubmit}>
+		<form className="space-y-6 max-w-2xl mx-auto p-4 md:p-6 w-full" onSubmit={handleSubmit}>
 			<div>
 				<Input
 					placeholder="Comment Version"
@@ -280,7 +280,7 @@ export default function DynamicSubjectForm({
 					</CardHeader>
 					<CardContent className="space-y-4">
 						{section.children.map((level, levelIndex) => (
-							<div key={levelIndex} className="grid grid-cols-[1fr,2fr,auto] gap-2">
+							<div key={levelIndex} className="grid grid-cols-1 md:grid-cols-[1fr,2fr,auto] gap-2">
 								<Input
 									placeholder="Level Name"
 									name="levelName"

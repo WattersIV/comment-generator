@@ -18,7 +18,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<Header />
-				<main className="min-h-[calc(100vh-64px)]">{children}</main>
+				<main className="h-[calc(100vh-64px)] overflow-x-hidden overflow-y-auto">{children}</main>
 			</body>
 		</html>
 	);
