@@ -131,8 +131,8 @@ export default function Page() {
 	return (
 		<TextContent.Provider value={{ text, setText }}>
 			<ConfettiSwitch.Provider value={{ confetti, setConfetti }}>
-				<div className="md:grid md:h-screen gap-4 md:grid-cols-[1fr_3fr] flex flex-col">
-					<div className="col-span-1">
+				<div className="md:grid gap-4 md:grid-cols-[1fr_3fr] flex flex-col min-h-screen">
+					<div className="col-span-1 overflow-auto">
 						<Card className="w-full ">
 							<CardHeader>
 								<CardTitle>Comment Generator</CardTitle>
@@ -154,7 +154,7 @@ export default function Page() {
 							</Tabs>
 						</Card>
 					</div>
-					<div className="col-span-1">
+					<div className="col-span-1 overflow-auto">
 						<CommentBox activeTab={activeTab} />
 					</div>
 				</div>

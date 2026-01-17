@@ -3,6 +3,16 @@ import { createClient } from '@/utils/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 
+type CommentVersion = {
+	version_name: string;
+	id: string;
+};
+
+type SupabaseResponse = {
+	version_name: string;
+	id: string;
+};
+
 export default async function Page() {
 	const supabase = await createClient();
 	const id = await getIdFromSession(supabase);
@@ -13,11 +23,10 @@ export default async function Page() {
 
 	const { data, error } = await supabase.from('comment_versions').select('*').eq('user_id', id);
 	if (error) {
-		console.error('Error getting comment versions', error);
 		redirect('/error');
 	}
-	// send array of comment versions to DynamicSubjectForm but only with the version_name and id
-	const commentVersions = data.map((version) => ({
+
+	const commentVersions: CommentVersion[] = (data as SupabaseResponse[]).map((version) => ({
 		version_name: version.version_name,
 		id: version.id
 	}));
@@ -25,7 +34,7 @@ export default async function Page() {
 	return <DynamicSubjectForm commentVersions={commentVersions} />;
 }
 
-async function getIdFromSession(supabase: SupabaseClient<any, 'public', any>) {
+async function getIdFromSession(supabase: SupabaseClient): Promise<string | null> {
 	const user = await supabase.auth.getSession();
-	return user.data.session.user.id ? user.data.session.user.id : null;
+	return user.data.session?.user?.id ?? null;
 }

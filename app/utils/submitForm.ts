@@ -7,6 +7,7 @@ import {
 	mathSections,
 	scienceSections
 } from '@/constants/subjects';
+import { LEARNING_SKILLS_OPENING_TEXT, COMMENT_SUFFIX } from '@/constants/promptConfig';
 
 export function handleSubmit(
 	event: React.FormEvent<HTMLFormElement>,
@@ -14,7 +15,6 @@ export function handleSubmit(
 	setText: React.Dispatch<React.SetStateAction<string>>
 ) {
 	event.preventDefault();
-	console.log('handling submit');
 	const formData = new FormData(event.currentTarget);
 	const data = Object.fromEntries(formData);
 
@@ -35,10 +35,9 @@ export function handleSubmit(
 			setText(science.createComment());
 			break;
 		case 'learning skills':
-			const openingText = `In keeping with our Board's Spiritual theme, "We are called to open doors, build bridges, and nourish new beginnings," the school's learning skills focus for this reporting period has been to highlight and strengthen responsibility and organization with a board-wide focus on the Global Competency of critical thinking.`;
 			const learningSkills = new LearningSkillStrategy();
 			learningSkills.getData(data as Record<string, string>);
-			setText(`${openingText} ${learningSkills.createComment()}`);
+			setText(`${LEARNING_SKILLS_OPENING_TEXT} ${learningSkills.createComment()}`);
 			break;
 	}
 }
@@ -63,7 +62,7 @@ class Handler {
 		}
 
 		comment = comment.trim();
-		comment += ' SW';
+		comment += COMMENT_SUFFIX;
 		return comment;
 	}
 }
