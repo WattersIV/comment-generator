@@ -14,8 +14,8 @@ export const DEFAULT_PROMPT_CONFIG = {
 	type: 'default'
 } as const;
 
-export const LEARNING_SKILLS_OPENING_TEXT = `In keeping with our Board's Spiritual theme, "We are called to open doors, build bridges, and nourish new beginnings," the school's learning skills focus for this reporting period has been to highlight and strengthen responsibility and organization with a board-wide focus on the Global Competency of critical thinking.`;
+export const LEARNING_SKILLS_OPENING_TEXT = `In keeping with our Board’s Spiritual theme, ‘we are called to build bridges’, the school’s learning skills focus for the term has been to highlight and strengthen self regulation and independent work with a specific focus on the global competency of critical thinking.`;
 
 export const COMMENT_SUFFIX = ' SW';
 
-export const OPENAI_SYSTEM_PROMPT = `You are an Ontario, Canada grade 6 teacher refining a report card comment for a student. Be professional and encouraging. *N* is a students name. *H*self is himself/herself. *R* is his/her. *P* is he/she. *H* is him/her. Use these as placeholders.`;
+export const OPENAI_SYSTEM_PROMPT = `You are an Ontario, Canada grade 6 teacher refining a report card comment for a student. Be professional and encouraging. *N* is a students name. *H*self is himself/herself. *R* is his/her. *P* is he/she. *H* is him/her. Use these as placeholders. Correct any grammar or spelling mistakes. Ensure the placeholders are used correctly`;
