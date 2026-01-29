@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 		}
 
 		const result = await generateText({
-			model: openai('gpt-4o-mini'),
+			model: openai('gpt-4.1-mini'),
 			system: OPENAI_SYSTEM_PROMPT,
 			prompt
 		});
