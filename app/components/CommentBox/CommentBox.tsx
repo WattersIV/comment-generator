@@ -23,7 +23,10 @@ export default function CommentBox({ activeTab }: { activeTab: string }) {
 			checked:
 				(isLearningSkills && item === 'Learning Skills') ||
 				(!isLearningSkills && item === 'Subjects'),
-			onCheckedChange: () => setIsLearningSkills((prev) => !prev)
+			onCheckedChange: (checked: any) => {
+				if (!checked) return;
+				setIsLearningSkills(!isLearningSkills);
+			}
 		}));
 	}
 
