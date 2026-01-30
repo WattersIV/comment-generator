@@ -34,10 +34,10 @@ export async function POST(req: Request) {
 		let prompt;
 		if (activeTab === 'learning skills') {
 			const { minCharacters, maxCharacters } = LEARNING_SKILLS_PROMPT_CONFIG;
-			prompt = `Improve this learning skill comment. Make the feedback concise using a professional tone. Do not edit the first paragraph. Make the new comment max ${maxCharacters}, min ${minCharacters} characters. Don't include anything other than then new comment in the response. Heres the comment: ${text}`;
+			prompt = `Refine this learning skill comment for clarity and specificity. Maintain a professional, encouraging tone. Preserve the first paragraph unchanged. Target ${minCharacters}-${maxCharacters} characters. Return only the refined comment.\n\n${text}`;
 		} else {
 			const { idealCharacters, maxCharacters } = DEFAULT_PROMPT_CONFIG;
-			prompt = `Improve this comment. Make the feedback concise using a professional tone. Make the new comment max ${maxCharacters} characters and ideally ${idealCharacters} characters. Don't include anything other than then new comment in the response. Heres the comment: ${text}`;
+			prompt = `Refine this report card comment for clarity and specificity. Maintain a professional, encouraging tone. Target ${idealCharacters} characters (max ${maxCharacters}). Return only the refined comment.\n\n${text}`;
 		}
 
 		const result = await generateText({
