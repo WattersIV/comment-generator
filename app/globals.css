@@ -72,11 +72,37 @@
 	}
 	html {
 		height: 100%;
-		overflow-x: hidden;
+		overflow: hidden;
 	}
 	body {
 		@apply bg-background text-foreground;
 		height: 100%;
-		overflow-x: hidden;
+		overflow: hidden;
 	}
+}
+
+/* Blob animations for login page */
+@keyframes blob {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	33% {
+		transform: translate(15px, -25px) scale(1.05);
+	}
+	66% {
+		transform: translate(-10px, 10px) scale(0.95);
+	}
+}
+
+.animate-blob {
+	animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+	animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+	animation-delay: 4s;
 }

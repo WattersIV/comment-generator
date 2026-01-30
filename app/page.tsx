@@ -1,16 +1,12 @@
 'use client';
 
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import MathForm from './components/subjects/Math';
-import LanguageForm from './components/subjects/Language';
-import ScienceForm from './components/subjects/Science';
 import CommentBox from './components/CommentBox/CommentBox';
 import { TextContent } from './contexts/TextContext';
 import dynamic from 'next/dynamic';
 import { ConfettiSwitch } from './contexts/ConfettiContext';
-import LearningSkills from './components/subjects/LearningSkills';
 import { createClient } from './utils/supabase/client';
 import { DropdownMenuCheckboxes } from './components/ui/checkbox-dropdown';
 import SubjectForm from './components/subjects/SubjectForm';
@@ -20,6 +16,7 @@ export default function Page() {
 	const [text, setText] = useState('');
 	const [confetti, setConfetti] = useState(false);
 	const [activeTab, setActiveTab] = useState('');
+	const [isUserEdited, setIsUserEdited] = useState(false);
 	const [commentVersions, setCommentVersions] = useState([]);
 	const [selectedCommentVersion, setSelectedCommentVersion] = useState(null);
 	const [subjects, setSubjects] = useState([]);
@@ -61,6 +58,10 @@ export default function Page() {
 
 		fetchSubjects();
 	}, [selectedCommentVersion]);
+
+	useEffect(() => {
+		setIsUserEdited(false);
+	}, [activeTab]);
 
 	useEffect(() => {
 		if (!activeTab) return;
@@ -129,9 +130,9 @@ export default function Page() {
 	// 		<LearningSkills />
 	// 	);
 	return (
-		<TextContent.Provider value={{ text, setText }}>
+		<TextContent.Provider value={{ text, setText, isUserEdited, setIsUserEdited }}>
 			<ConfettiSwitch.Provider value={{ confetti, setConfetti }}>
-				<div className="md:grid gap-4 md:grid-cols-[1fr_3fr] flex flex-col h-full p-4 overflow-hidden">
+					<div className="md:grid gap-4 md:grid-cols-[1fr_3fr] flex flex-col h-full p-4 overflow-hidden">
 					<div className="col-span-1 overflow-y-auto overflow-x-hidden min-w-0">
 						<Card className="w-full">
 							<CardHeader>
@@ -159,8 +160,8 @@ export default function Page() {
 					</div>
 				</div>
 				<Confetti />
-			</ConfettiSwitch.Provider>
-		</TextContent.Provider>
+				</ConfettiSwitch.Provider>
+			</TextContent.Provider>
 	);
 }
 

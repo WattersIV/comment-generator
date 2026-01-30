@@ -1,3 +1,5 @@
+import { toast } from 'sonner';
+
 export async function handleUseGPT(
 	text: string,
 	setText: React.Dispatch<React.SetStateAction<string>>,
@@ -14,11 +16,17 @@ export async function handleUseGPT(
 			},
 			body: JSON.stringify({ text, activeTab })
 		});
+
+		if (!response.ok) {
+			throw new Error('Failed to refine comment');
+		}
+
 		setText(await response.text());
-		console.log('Confetti time!');
+		toast.success('Comment refined with AI!');
 		startConfetti();
 	} catch (error) {
 		console.error(error);
+		toast.error('Failed to refine comment. Please try again.');
 	} finally {
 		setIsLoading(false);
 	}

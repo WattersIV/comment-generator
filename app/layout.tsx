@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from './components/Header';
+import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<Header />
 				<main className="h-[calc(100vh-64px)] overflow-x-hidden overflow-y-auto">{children}</main>
+				<Toaster richColors position="bottom-right" />
 			</body>
 		</html>
 	);

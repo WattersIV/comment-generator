@@ -29,7 +29,7 @@ export default function DropDownOption({
 	return (
 		<div key={section}>
 			<Label className="font-semibold">{title}</Label>
-			<div className="grid grid-cols-2 gap-2">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
 				<Select name={section} onValueChange={onValueChange}>
 					<SelectTrigger id={`${section}-level`}>
 						<SelectValue placeholder="Select level" />

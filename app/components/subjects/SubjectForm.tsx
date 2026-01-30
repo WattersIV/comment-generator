@@ -1,6 +1,6 @@
 import { CardContent } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
-import SubmitButton from '../SubmitButton/SubmitButton';
+import { Button } from '@/components/ui/button';
 import { useContext, useEffect, useState } from 'react';
 import { TextContent } from '@/contexts/TextContext';
 import DropDownOption from '@/components/DropDownOption/DropDownOption';
@@ -19,7 +19,7 @@ export default function SubjectForm({
 	sections: Sections;
 	subject: string;
 }) {
-	const { text, setText } = useContext(TextContent);
+	const { setText, isUserEdited, setIsUserEdited } = useContext(TextContent);
 	const [subjectComments, setSubjectComments] = useState(
 		sections.reduce((acc, section) => {
 			acc[section.name] = '';
@@ -28,6 +28,8 @@ export default function SubjectForm({
 	);
 
 	useEffect(() => {
+		if (isUserEdited) return;
+
 		let comment = Object.values(subjectComments)
 			.map((comment) => {
 				return comment;
@@ -35,7 +37,18 @@ export default function SubjectForm({
 			.join(' ');
 		comment += ' SW';
 		setText(comment);
-	}, [subjectComments]);
+	}, [subjectComments, isUserEdited]);
+
+	const handleRebuild = () => {
+		setIsUserEdited(false);
+		let comment = Object.values(subjectComments)
+			.map((comment) => {
+				return comment;
+			})
+			.join(' ');
+		comment += ' SW';
+		setText(comment);
+	};
 
 	return (
 		<form
@@ -62,7 +75,16 @@ export default function SubjectForm({
 					</div>
 				</CardContent>
 			</TabsContent>
-			<SubmitButton />
+			<div className="flex justify-center gap-2 p-4">
+				<Button type="submit" className="px-8 py-2 text-lg">
+					Do it up
+				</Button>
+				{isUserEdited && (
+					<Button type="button" variant="outline" onClick={handleRebuild}>
+						Rebuild from Selections
+					</Button>
+				)}
+			</div>
 		</form>
 	);
 }
