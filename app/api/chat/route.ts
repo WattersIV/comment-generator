@@ -3,7 +3,8 @@ import { generateText } from 'ai';
 import {
 	LEARNING_SKILLS_PROMPT_CONFIG,
 	DEFAULT_PROMPT_CONFIG,
-	OPENAI_SYSTEM_PROMPT
+	OPENAI_SYSTEM_PROMPT,
+	LEARNING_SKILLS_OPENING_TEXT
 } from '@/constants/promptConfig';
 import { createClient } from '@/utils/supabase/server';
 
@@ -34,10 +35,25 @@ export async function POST(req: Request) {
 		let prompt;
 		if (activeTab === 'learning skills') {
 			const { minCharacters, maxCharacters } = LEARNING_SKILLS_PROMPT_CONFIG;
-			prompt = `Refine this learning skill comment for clarity and specificity. Maintain a professional, encouraging tone. Preserve the first paragraph unchanged. Target ${minCharacters}-${maxCharacters} characters. Return only the refined comment.\n\n${text}`;
+			prompt = `Refine this learning skill comment for clarity and specificity. Maintain a professional, encouraging tone.
+
+IMPORTANT RULES:
+- The opening sentence MUST remain EXACTLY as written — do not modify it: "${LEARNING_SKILLS_OPENING_TEXT}"
+- The comment ends with "(SW)" — preserve this suffix exactly, including parentheses.
+- Your response MUST be between ${minCharacters}-${maxCharacters} characters. Do NOT exceed ${maxCharacters} characters.
+
+Comment to refine:
+${text}`;
 		} else {
 			const { idealCharacters, maxCharacters } = DEFAULT_PROMPT_CONFIG;
-			prompt = `Refine this report card comment for clarity and specificity. Maintain a professional, encouraging tone. Target ${idealCharacters} characters (max ${maxCharacters}). Return only the refined comment.\n\n${text}`;
+			prompt = `Refine this report card comment for clarity and specificity. Maintain a professional, encouraging tone.
+
+IMPORTANT RULES:
+- The comment ends with "(SW)" — preserve this suffix exactly, including parentheses.
+- Your response MUST NOT exceed ${maxCharacters} characters. This is a hard cap. Aim for ${idealCharacters} characters.
+
+Comment to refine:
+${text}`;
 		}
 
 		const result = await generateText({

@@ -39,4 +39,5 @@ Writing guidelines:
 Rules:
 - Correct grammar, spelling, punctuation, and incorrect token usage
 - Keep tokens contiguous with surrounding words (no added spaces inside tokens)
-- Return only the refined comment text — no explanations or metadata`;
+- Return only the refined comment text — no explanations or metadata
+- CRITICAL: You MUST respect the character limit specified in each request. This is a hard cap, not a suggestion. Count your characters carefully before responding.`;
