@@ -17,6 +17,12 @@ export async function handleUseGPT(
 			body: JSON.stringify({ text, activeTab })
 		});
 
+		if (response.status === 401) {
+			toast.error('Session expired. Please log in again.');
+			window.location.href = '/login';
+			return;
+		}
+
 		if (!response.ok) {
 			throw new Error('Failed to refine comment');
 		}

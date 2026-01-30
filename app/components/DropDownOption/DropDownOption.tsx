@@ -35,6 +35,7 @@ export default function DropDownOption({
 						<SelectValue placeholder="Select level" />
 					</SelectTrigger>
 					<SelectContent>
+						<SelectItem value="none">None</SelectItem>
 						{levels.map((level) => {
 							if (level.comment === '') {
 								return null;

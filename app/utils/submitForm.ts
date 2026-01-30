@@ -55,7 +55,7 @@ class Handler {
 	createComment() {
 		let comment = '';
 		for (const [key, value] of this.data.entries()) {
-			if (value && value !== 'null') {
+			if (value && value !== 'null' && value !== 'none') {
 				const sectionComment = this.commentBank[this.subject][key][value] + ' ';
 				comment += sectionComment;
 			}
