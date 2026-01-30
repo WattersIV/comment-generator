@@ -65,7 +65,7 @@ export default function CommentBox({ activeTab }: { activeTab: string }) {
 					<CopyIcon className="h-5 w-5" />
 					Copy Text
 				</Button>
-				<DropdownMenuCheckboxes items={createItems()} title={'Select Comment Type'} />
+				<DropdownMenuCheckboxes items={createItems()} title={isLearningSkills ? 'Learning Skills' : 'Subjects'} />
 				<Button
 					variant="default"
 					className="flex items-center gap-2 rounded-md px-4 py-2 text-base font-medium"
