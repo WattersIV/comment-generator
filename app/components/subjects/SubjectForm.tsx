@@ -21,10 +21,13 @@ export default function SubjectForm({
 }) {
 	const { setText, isUserEdited, setIsUserEdited } = useContext(TextContent);
 	const [subjectComments, setSubjectComments] = useState(
-		sections.reduce((acc, section) => {
-			acc[section.name] = '';
-			return acc;
-		}, {} as { [key: string]: string })
+		sections.reduce(
+			(acc, section) => {
+				acc[section.name] = '';
+				return acc;
+			},
+			{} as { [key: string]: string }
+		)
 	);
 
 	useEffect(() => {
@@ -35,7 +38,7 @@ export default function SubjectForm({
 				return comment;
 			})
 			.join(' ');
-		comment += ' SW';
+		comment += ' (SW)';
 		setText(comment);
 	}, [subjectComments, isUserEdited]);
 
@@ -46,7 +49,7 @@ export default function SubjectForm({
 				return comment;
 			})
 			.join(' ');
-		comment += ' SW';
+		comment += ' (SW)';
 		setText(comment);
 	};
 
