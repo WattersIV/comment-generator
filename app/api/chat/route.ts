@@ -46,6 +46,7 @@ IMPORTANT RULES:
 - The opening sentence MUST remain EXACTLY as written — do not modify it: "${LEARNING_SKILLS_OPENING_TEXT}"
 - The comment ends with " (SW)" — preserve this suffix exactly, including parentheses.
 - Your response MUST be between ${minCharacters}-${maxCharacters} characters. Do NOT exceed ${maxCharacters} characters.
+- Output as a single continuous paragraph — no line breaks or paragraph separation.
 
 Comment to refine:
 ${text}`;
@@ -57,6 +58,7 @@ ${text}`;
 IMPORTANT RULES:
 - The comment ends with " (SW)" — preserve this suffix exactly, including parentheses.
 - Your response MUST NOT exceed ${maxCharacters} characters. This is a hard cap. Aim for ${idealCharacters} characters.
+- Output as a single continuous paragraph — no line breaks or paragraph separation.
 
 Comment to refine:
 ${text}`;
