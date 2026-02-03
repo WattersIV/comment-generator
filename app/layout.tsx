@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
+			<body className={inter.className} suppressHydrationWarning>
 				<Header />
 				<main className="h-[calc(100vh-64px)] overflow-x-hidden overflow-y-auto">{children}</main>
 				<Toaster richColors position="bottom-right" />

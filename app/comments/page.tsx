@@ -31,7 +31,11 @@ export default async function Page() {
 		id: version.id
 	}));
 
-	return <DynamicSubjectForm commentVersions={commentVersions} />;
+	return (
+		<div className="h-full overflow-hidden">
+			<DynamicSubjectForm commentVersions={commentVersions} />
+		</div>
+	);
 }
 
 async function getIdFromSession(supabase: SupabaseClient): Promise<string | null> {
