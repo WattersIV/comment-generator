@@ -452,7 +452,7 @@ export default function Page() {
 
 									{/* Quick info */}
 									<div className="text-xs text-muted-foreground text-center">
-										Use *N* for name, *P* for pronoun, *H* for his/her, *R* for he/she
+										Use *N* for name, *P* for he/she, *H* for him/her, *R* for his/her
 									</div>
 								</div>
 							)}

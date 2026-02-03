@@ -667,7 +667,7 @@ export default function DynamicSubjectForm({
 										className="min-h-[200px] resize-y"
 									/>
 									<p className="text-xs text-muted-foreground">
-										Use *N* for name, *P* for pronoun, *H* for his/her, *R* for he/she
+										Use *N* for name, *P* for he/she, *H* for him/her, *R* for his/her
 									</p>
 								</div>
 

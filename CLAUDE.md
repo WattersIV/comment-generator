@@ -43,7 +43,13 @@ comment_versions (user_id, version_name, id)
 - `ConfettiSwitch` - Triggers celebration animation after GPT success
 
 ### Prompt System
-AI prompts preserve token placeholders (*N*, *P*, *H*, *R*) for pronoun substitution. Character limits:
+AI prompts preserve token placeholders for pronoun substitution:
+- *N* = student name
+- *P* = subject pronoun (he/she)
+- *H* = object pronoun (him/her)
+- *R* = possessive pronoun (his/her)
+
+Character limits:
 - Default subjects: 900-1300 characters
 - Learning Skills: 1600-2000 characters
 
