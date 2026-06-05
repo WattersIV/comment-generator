@@ -78,7 +78,7 @@ ${text}`;
 					: `${prompt}\n\nCRITICAL: Your previous response was ${responseText.length} characters, which exceeds the limit of ${maxCharacters}. You MUST shorten it significantly.`;
 
 			const result = await generateText({
-				model: openai('gpt-4.1'),
+				model: openai('gpt-5.5'),
 				system: OPENAI_SYSTEM_PROMPT,
 				prompt: currentPrompt,
 				maxTokens,
