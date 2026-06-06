@@ -124,7 +124,9 @@ export default function Page() {
 				const { data: sectionsData, error: sectionsError } = await supabase
 					.from('sections')
 					.select('section_name, id')
-					.eq('subject_id', subjectId);
+					.eq('subject_id', subjectId)
+					.order('sort_order', { ascending: true })
+					.order('id', { ascending: true });
 
 				if (sectionsError) {
 					console.error('Error getting sections', sectionsError);
@@ -136,7 +138,9 @@ export default function Page() {
 						const { data: levelsData, error: levelsError } = await supabase
 							.from('levels')
 							.select('level_name, comment')
-							.eq('section_id', section.id);
+							.eq('section_id', section.id)
+							.order('sort_order', { ascending: true })
+							.order('id', { ascending: true });
 
 						if (levelsError) {
 							console.error('Error getting levels', levelsError);

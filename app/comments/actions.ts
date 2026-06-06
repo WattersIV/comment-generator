@@ -2,39 +2,69 @@
 import { createClient } from '@/utils/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
+type LevelInput = { id?: string | null; name: string; comment: string; sortOrder: number };
+type SectionInput = { id?: string | null; name: string; sortOrder: number; levels: LevelInput[] };
 type SubjectFormData = {
 	commentVersion: string;
+	// Ids of the existing rows being edited, when updating/renaming in place.
+	// Absent/null means create (or find an existing row by name) instead.
+	versionId?: string | null;
 	subjectName: string;
-	sections: Record<string, Record<string, string>>;
+	subjectId?: string | null;
+	sections: SectionInput[];
 };
 
-export async function postComments(formData: SubjectFormData) {
+// Ids of every row touched by a save, in the same order they were submitted,
+// so the client can adopt them and keep editing/renaming in place afterwards.
+type SaveResult = {
+	versionId: string;
+	subjectId: string;
+	sections: { id: string; levels: { id: string }[] }[];
+};
+
+export async function postComments(formData: SubjectFormData): Promise<SaveResult | null> {
 	const supabase = await createClient();
 
-	const commentVersionID = await insertCommentVersion(formData, supabase);
-	if (!commentVersionID) {
-		return;
+	const versionId = await upsertVersion(formData, supabase);
+	if (!versionId) {
+		return null;
 	}
 
-	const subjectID = await insertSubject(formData, commentVersionID, supabase);
-	if (!subjectID) {
-		return;
+	const subjectId = await upsertSubject(formData, versionId, supabase);
+	if (!subjectId) {
+		return null;
 	}
 
-	const sectionData = await insertSections(formData, subjectID, supabase);
-	if (!sectionData) {
-		return;
+	const sections = await upsertSectionsAndLevels(formData, subjectId, supabase);
+	if (!sections) {
+		return null;
 	}
 
-	const levelData = await insertLevels(formData, sectionData, supabase);
-	return levelData;
+	return { versionId, subjectId, sections };
 }
 
-async function insertCommentVersion(
+async function upsertVersion(
 	formData: SubjectFormData,
 	supabase: SupabaseClient<any, 'public', any>
 ) {
 	const versionName = formData.commentVersion;
+
+	if (formData.versionId) {
+		const { data, error } = await supabase
+			.from('comment_versions')
+			.update({ version_name: versionName })
+			.eq('id', formData.versionId)
+			.select('id')
+			.single();
+
+		if (error) {
+			console.error('Error updating Comment Version', error);
+			return null;
+		}
+
+		return data.id as string;
+	}
+
 	const { data, error } = await supabase
 		.from('comment_versions')
 		.select('id')
@@ -47,7 +77,7 @@ async function insertCommentVersion(
 	}
 
 	if (data) {
-		return data.id;
+		return data.id as string;
 	}
 
 	const { data: insertData, error: insertError } = await supabase
@@ -61,20 +91,39 @@ async function insertCommentVersion(
 		return null;
 	}
 
-	return insertData.id;
+	return insertData.id as string;
 }
 
-async function insertSubject(
+async function upsertSubject(
 	formData: SubjectFormData,
-	commentVersionID: string,
+	versionId: string,
 	supabase: SupabaseClient<any, 'public', any>
 ) {
 	const subjectName = formData.subjectName;
+
+	// Editing an existing subject: update the row in place by id so a rename
+	// changes the name rather than creating a duplicate row.
+	if (formData.subjectId) {
+		const { data, error } = await supabase
+			.from('subjects')
+			.update({ subject_name: subjectName })
+			.eq('id', formData.subjectId)
+			.select('id')
+			.single();
+
+		if (error) {
+			console.error('Error updating Subject', error);
+			return null;
+		}
+
+		return data.id as string;
+	}
+
 	const { data, error } = await supabase
 		.from('subjects')
 		.select('id')
 		.eq('subject_name', subjectName)
-		.eq('version_id', commentVersionID)
+		.eq('version_id', versionId)
 		.single();
 
 	if (error && error.code !== 'PGRST116') {
@@ -83,12 +132,12 @@ async function insertSubject(
 	}
 
 	if (data) {
-		return data.id;
+		return data.id as string;
 	}
 
 	const { data: insertData, error: insertError } = await supabase
 		.from('subjects')
-		.insert([{ subject_name: subjectName, version_id: commentVersionID }])
+		.insert([{ subject_name: subjectName, version_id: versionId }])
 		.select('id')
 		.single();
 
@@ -97,98 +146,158 @@ async function insertSubject(
 		return null;
 	}
 
-	return insertData.id;
+	return insertData.id as string;
 }
 
-type SectionReturnData = { id: string; section_name: string }[];
-
-async function insertSections(
+async function upsertSectionsAndLevels(
 	formData: SubjectFormData,
-	subjectID: string,
+	subjectId: string,
 	supabase: SupabaseClient<any, 'public', any>
-) {
-	const sections = Object.keys(formData.sections);
-	let output: SectionReturnData = [];
+): Promise<SaveResult['sections'] | null> {
+	const result: SaveResult['sections'] = [];
 
-	for (const sectionName of sections) {
-		const { data, error } = await supabase
-			.from('sections')
-			.select('id, section_name')
-			.eq('section_name', sectionName)
-			.eq('subject_id', subjectID)
-			.single();
-
-		if (error && error.code !== 'PGRST116') {
-			console.error('Error checking Section', error);
+	for (const section of formData.sections) {
+		const sectionId = await upsertSection(section, subjectId, supabase);
+		if (!sectionId) {
 			return null;
 		}
 
-		if (data) {
-			output.push(data);
-			continue;
+		const levels: { id: string }[] = [];
+		for (const level of section.levels) {
+			const levelId = await upsertLevel(level, sectionId, supabase);
+			if (!levelId) {
+				return null;
+			}
+			levels.push({ id: levelId });
 		}
 
-		const { data: insertData, error: insertError } = await supabase
-			.from('sections')
-			.insert({ subject_id: subjectID, section_name: sectionName })
-			.select('id, section_name')
-			.single();
+		result.push({ id: sectionId, levels });
+	}
 
-		if (insertError) {
-			console.error('Error inserting Section', insertError);
+	return result;
+}
+
+async function upsertSection(
+	section: SectionInput,
+	subjectId: string,
+	supabase: SupabaseClient<any, 'public', any>
+) {
+	// Editing an existing section: update name + order in place by id.
+	if (section.id) {
+		const { error } = await supabase
+			.from('sections')
+			.update({ section_name: section.name, sort_order: section.sortOrder })
+			.eq('id', section.id);
+
+		if (error) {
+			console.error('Error updating Section', error);
 			return null;
 		}
 
-		output.push(insertData);
+		return section.id;
 	}
 
-	return output as SectionReturnData;
+	const { data, error } = await supabase
+		.from('sections')
+		.select('id')
+		.eq('section_name', section.name)
+		.eq('subject_id', subjectId)
+		.single();
+
+	if (error && error.code !== 'PGRST116') {
+		console.error('Error checking Section', error);
+		return null;
+	}
+
+	if (data) {
+		const { error: updateError } = await supabase
+			.from('sections')
+			.update({ sort_order: section.sortOrder })
+			.eq('id', data.id);
+
+		if (updateError) {
+			console.error('Error updating Section order', updateError);
+			return null;
+		}
+
+		return data.id as string;
+	}
+
+	const { data: insertData, error: insertError } = await supabase
+		.from('sections')
+		.insert({ subject_id: subjectId, section_name: section.name, sort_order: section.sortOrder })
+		.select('id')
+		.single();
+
+	if (insertError) {
+		console.error('Error inserting Section', insertError);
+		return null;
+	}
+
+	return insertData.id as string;
 }
 
-async function insertLevels(
-	formData: SubjectFormData,
-	sectionData: SectionReturnData,
+async function upsertLevel(
+	level: LevelInput,
+	sectionId: string,
 	supabase: SupabaseClient<any, 'public', any>
 ) {
-	for (const section of sectionData) {
-		const levels = formData.sections[section.section_name];
-		for (const [name, comment] of Object.entries(levels)) {
-			const { data, error } = await supabase
-				.from('levels')
-				.select('id')
-				.eq('section_id', section.id)
-				.eq('level_name', name)
-				.single();
+	// Editing an existing level: update name + comment + order in place by id.
+	if (level.id) {
+		const { error } = await supabase
+			.from('levels')
+			.update({ level_name: level.name, comment: level.comment, sort_order: level.sortOrder })
+			.eq('id', level.id);
 
-			if (error && error.code !== 'PGRST116') {
-				console.error('Error checking Level', error);
-				return null;
-			}
-
-			if (data) {
-				// Update the existing level if needed
-				const { error: updateError } = await supabase
-					.from('levels')
-					.update({ comment })
-					.eq('id', data.id);
-
-				if (updateError) {
-					console.error('Error updating Level', updateError);
-					return null;
-				}
-				continue;
-			}
-
-			const { error: insertError } = await supabase
-				.from('levels')
-				.insert({ section_id: section.id, level_name: name, comment });
-
-			if (insertError) {
-				console.error('Error inserting Level', insertError);
-				return null;
-			}
+		if (error) {
+			console.error('Error updating Level', error);
+			return null;
 		}
+
+		return level.id;
 	}
 
-	return true;
+	const { data, error } = await supabase
+		.from('levels')
+		.select('id')
+		.eq('section_id', sectionId)
+		.eq('level_name', level.name)
+		.single();
+
+	if (error && error.code !== 'PGRST116') {
+		console.error('Error checking Level', error);
+		return null;
+	}
+
+	if (data) {
+		const { error: updateError } = await supabase
+			.from('levels')
+			.update({ comment: level.comment, sort_order: level.sortOrder })
+			.eq('id', data.id);
+
+		if (updateError) {
+			console.error('Error updating Level', updateError);
+			return null;
+		}
+
+		return data.id as string;
+	}
+
+	const { data: insertData, error: insertError } = await supabase
+		.from('levels')
+		.insert({
+			section_id: sectionId,
+			level_name: level.name,
+			comment: level.comment,
+			sort_order: level.sortOrder
+		})
+		.select('id')
+		.single();
+
+	if (insertError) {
+		console.error('Error inserting Level', insertError);
+		return null;
+	}
+
+	return insertData.id as string;
 }
