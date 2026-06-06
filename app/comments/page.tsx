@@ -39,6 +39,10 @@ export default async function Page() {
 }
 
 async function getIdFromSession(supabase: SupabaseClient): Promise<string | null> {
-	const user = await supabase.auth.getSession();
-	return user.data.session?.user?.id ?? null;
+	// Use getUser(), not getSession(): on the server getSession() reads the cookie
+	// without revalidating and can return a stale/null session, whereas getUser()
+	// validates against the auth server (the token is already refreshed by middleware).
+	const { data, error } = await supabase.auth.getUser();
+	if (error) return null;
+	return data.user?.id ?? null;
 }

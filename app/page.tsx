@@ -71,21 +71,55 @@ export default function Page() {
 	const supabase = createClient();
 
 	useEffect(() => {
-		async function fetchCommentVersions() {
-			const userID = await getIdFromSession(supabase);
-			if (!userID) return;
+		let cancelled = false;
+
+		async function loadVersions(userID: string) {
 			const { data, error } = await supabase
 				.from('comment_versions')
 				.select('id, version_name')
 				.eq('user_id', userID);
+			if (cancelled) return;
 			if (error) {
 				console.error('Error getting comment versions', error);
+				toast.error('Could not load your saved versions. Please refresh the page.');
 				return;
 			}
 			setCommentVersions(data || []);
 		}
 
-		fetchCommentVersions();
+		async function init() {
+			// Use getUser() rather than getSession(): getSession() force-refreshes a
+			// near-expiry token, which can race the server middleware's refresh,
+			// rotate the refresh token out from under it, and wipe the session —
+			// leaving this list silently empty. getUser() validates without that race.
+			const {
+				data: { user }
+			} = await supabase.auth.getUser();
+			if (user) loadVersions(user.id);
+		}
+
+		init();
+
+		// The session may not be ready on first mount, or may be mid-refresh. Refetch
+		// once the auth state settles so saved data loads as soon as the session is
+		// available instead of leaving the dropdown silently empty. Use the session
+		// from the callback — calling getUser()/getSession() here can deadlock the
+		// auth lock.
+		const {
+			data: { subscription }
+		} = supabase.auth.onAuthStateChange((event, session) => {
+			if (
+				(event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') &&
+				session?.user
+			) {
+				loadVersions(session.user.id);
+			}
+		});
+
+		return () => {
+			cancelled = true;
+			subscription.unsubscribe();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -467,9 +501,4 @@ export default function Page() {
 			</ConfettiSwitch.Provider>
 		</TextContent.Provider>
 	);
-}
-
-async function getIdFromSession(supabase: any) {
-	const user = await supabase.auth.getSession();
-	return user.data.session?.user?.id ?? null;
 }
