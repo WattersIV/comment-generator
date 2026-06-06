@@ -22,7 +22,9 @@ import {
 	FileText,
 	Layers,
 	BookOpen,
-	GripVertical
+	GripVertical,
+	CheckCircle2,
+	AlertCircle
 } from 'lucide-react';
 import { postComments } from '@/comments/actions';
 import { createClient } from '@/utils/supabase/client';
@@ -74,6 +76,10 @@ export default function DynamicSubjectForm({
 	const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([0]));
 	const [editingItem, setEditingItem] = useState<EditingItem>(null);
 	const [isSaving, setIsSaving] = useState(false);
+	// Feedback shown next to the Save button. Cleared when a new save starts.
+	const [saveStatus, setSaveStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(
+		null
+	);
 	// Drag-and-drop reorder state. `null` means nothing is being dragged / hovered.
 	const [dragSection, setDragSection] = useState<number | null>(null);
 	const [dragOverSection, setDragOverSection] = useState<number | null>(null);
@@ -268,6 +274,7 @@ export default function DynamicSubjectForm({
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSaving(true);
+		setSaveStatus(null);
 
 		// Send arrays carrying ids + explicit order so the server updates rows in
 		// place (renames don't duplicate) and persists drag-and-drop order.
@@ -290,37 +297,62 @@ export default function DynamicSubjectForm({
 			subjectId: selectedSubjectId,
 			sections: payloadSections
 		};
-		const result = await postComments(formattedData);
-		setIsSaving(false);
-		if (!result) return;
 
-		// Adopt the saved ids so subsequent edits/renames update in place rather
-		// than creating duplicates, and reflect renames in the dropdowns without
-		// a reload.
-		setSelectedVersionId(result.versionId);
-		setSelectedSubjectId(result.subjectId);
-		setCreatingVersion(false);
-		setCreatingSubject(false);
-		setSections((prev) =>
-			prev.map((section, sectionIndex) => ({
-				...section,
-				id: result.sections[sectionIndex]?.id ?? section.id,
-				children: section.children.map((level, levelIndex) => ({
-					...level,
-					id: result.sections[sectionIndex]?.levels[levelIndex]?.id ?? level.id
+		try {
+			const result = await postComments(formattedData);
+
+			// The server returns null when a write fails partway. Some rows may have
+			// been saved already, so tell the user it was only partial and to retry.
+			if (!result) {
+				setSaveStatus({
+					type: 'error',
+					message: "Couldn't save everything — some changes may not have been saved. Please try again."
+				});
+				return;
+			}
+
+			// Adopt the saved ids so subsequent edits/renames update in place rather
+			// than creating duplicates, and reflect renames in the dropdowns without
+			// a reload.
+			setSelectedVersionId(result.versionId);
+			setSelectedSubjectId(result.subjectId);
+			setCreatingVersion(false);
+			setCreatingSubject(false);
+			setSections((prev) =>
+				prev.map((section, sectionIndex) => ({
+					...section,
+					id: result.sections[sectionIndex]?.id ?? section.id,
+					children: section.children.map((level, levelIndex) => ({
+						...level,
+						id: result.sections[sectionIndex]?.levels[levelIndex]?.id ?? level.id
+					}))
 				}))
-			}))
-		);
-		setVersions((prev) =>
-			prev.some((v) => v.id === result.versionId)
-				? prev.map((v) => (v.id === result.versionId ? { ...v, version_name: commentVersion } : v))
-				: [...prev, { id: result.versionId, version_name: commentVersion }]
-		);
-		setFetchedSubjects((prev) =>
-			prev.some((s) => s.id === result.subjectId)
-				? prev.map((s) => (s.id === result.subjectId ? { ...s, subject_name: subjectName } : s))
-				: [...prev, { id: result.subjectId, subject_name: subjectName }]
-		);
+			);
+			setVersions((prev) =>
+				prev.some((v) => v.id === result.versionId)
+					? prev.map((v) =>
+							v.id === result.versionId ? { ...v, version_name: commentVersion } : v
+					  )
+					: [...prev, { id: result.versionId, version_name: commentVersion }]
+			);
+			setFetchedSubjects((prev) =>
+				prev.some((s) => s.id === result.subjectId)
+					? prev.map((s) => (s.id === result.subjectId ? { ...s, subject_name: subjectName } : s))
+					: [...prev, { id: result.subjectId, subject_name: subjectName }]
+			);
+			setSaveStatus({ type: 'success', message: 'All changes saved' });
+		} catch (error) {
+			// A thrown error (network blip, server-action failure) used to leave the
+			// button stuck on "Saving..." forever because the reset never ran. The
+			// finally block now guarantees the reset; surface the failure here.
+			console.error('Error saving comments', error);
+			setSaveStatus({
+				type: 'error',
+				message: "Couldn't save — something went wrong. Your changes may not be saved. Please try again."
+			});
+		} finally {
+			setIsSaving(false);
+		}
 	};
 
 	const toggleSection = (index: number) => {
@@ -394,18 +426,21 @@ export default function DynamicSubjectForm({
 		const newSections = [...sections];
 		newSections[index].name = name;
 		setSections(newSections);
+		setSaveStatus(null);
 	};
 
 	const updateLevelName = (sectionIndex: number, levelIndex: number, name: string) => {
 		const newSections = [...sections];
 		newSections[sectionIndex].children[levelIndex].name = name;
 		setSections(newSections);
+		setSaveStatus(null);
 	};
 
 	const updateLevelComment = (sectionIndex: number, levelIndex: number, comment: string) => {
 		const newSections = [...sections];
 		newSections[sectionIndex].children[levelIndex].comment = comment;
 		setSections(newSections);
+		setSaveStatus(null);
 	};
 
 	const isFormValid =
@@ -418,10 +453,27 @@ export default function DynamicSubjectForm({
 			{/* Sticky Header */}
 			<div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center justify-between">
 				<h1 className="text-xl font-semibold">Comment Manager</h1>
-				<Button onClick={handleSubmit} disabled={!isFormValid || isSaving} className="gap-2">
-					<Save className="h-4 w-4" />
-					{isSaving ? 'Saving...' : 'Save Changes'}
-				</Button>
+				<div className="flex items-center gap-3">
+					{saveStatus && (
+						<span
+							className={`flex items-center gap-1.5 text-sm ${
+								saveStatus.type === 'success' ? 'text-green-600' : 'text-destructive'
+							}`}
+							role="status"
+						>
+							{saveStatus.type === 'success' ? (
+								<CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+							) : (
+								<AlertCircle className="h-4 w-4 flex-shrink-0" />
+							)}
+							{saveStatus.message}
+						</span>
+					)}
+					<Button onClick={handleSubmit} disabled={!isFormValid || isSaving} className="gap-2">
+						<Save className="h-4 w-4" />
+						{isSaving ? 'Saving...' : 'Save Changes'}
+					</Button>
+				</div>
 			</div>
 
 			<div className="flex-1 flex overflow-hidden">
