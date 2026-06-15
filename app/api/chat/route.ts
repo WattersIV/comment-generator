@@ -64,8 +64,9 @@ Comment to refine:
 ${text}`;
 		}
 
-		// Calculate max tokens based on character limit (~3.5 chars per token)
-		const maxTokens = Math.ceil(maxCharacters / 3.5);
+		// Calculate output tokens based on character limit (~3.5 chars per token),
+		// plus headroom for gpt-5.5 reasoning tokens (which count against this budget).
+		const maxOutputTokens = Math.ceil(maxCharacters / 3.5) + 2000;
 
 		// Retry loop to enforce character limits
 		const MAX_ATTEMPTS = 2;
@@ -81,11 +82,16 @@ ${text}`;
 				model: openai('gpt-5.5'),
 				system: OPENAI_SYSTEM_PROMPT,
 				prompt: currentPrompt,
-				maxTokens,
+				maxOutputTokens,
 				temperature: 0.5
 			});
 
 			responseText = result.text;
+
+			console.log(
+				`[chat] tab="${activeTab}" attempt=${attempt + 1} finishReason=${result.finishReason} ` +
+					`chars=${responseText.length} limit=${maxCharacters} usage=${JSON.stringify(result.usage)}`
+			);
 
 			if (responseText.length <= maxCharacters) {
 				break;
@@ -98,6 +104,7 @@ ${text}`;
 
 		return new Response(responseText, { status: 200 });
 	} catch (error) {
+		console.error('[chat] generation failed:', error);
 		const message = error instanceof Error ? error.message : 'An unknown error occurred';
 		return new Response(JSON.stringify({ error: message }), {
 			status: 500,
