@@ -8,8 +8,9 @@ import {
 } from '@/constants/promptConfig';
 import { createClient } from '@/utils/supabase/server';
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+// gpt-5.5 is a reasoning model and can be slow; allow up to 60 seconds,
+// since a single request may make two generation passes (initial + retry).
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
 	try {
@@ -83,7 +84,9 @@ ${text}`;
 				system: OPENAI_SYSTEM_PROMPT,
 				prompt: currentPrompt,
 				maxOutputTokens,
-				temperature: 0.5
+				// temperature is unsupported on reasoning models. Use low reasoning
+				// effort to keep latency down so the retry pass still fits in maxDuration.
+				providerOptions: { openai: { reasoningEffort: 'low' } }
 			});
 
 			responseText = result.text;
