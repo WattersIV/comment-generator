@@ -65,9 +65,11 @@ Comment to refine:
 ${text}`;
 		}
 
-		// Calculate output tokens based on character limit (~3.5 chars per token),
-		// plus headroom for gpt-5.5 reasoning tokens (which count against this budget).
-		const maxOutputTokens = Math.ceil(maxCharacters / 3.5) + 2000;
+		// Sanity ceiling against runaway generation only. The character limit is
+		// enforced by the retry loop below (via responseText.length), not here, and
+		// reasoning tokens count against this budget — so keep it generous enough to
+		// never truncate a legitimate comment.
+		const maxOutputTokens = 4000;
 
 		// Retry loop to enforce character limits
 		const MAX_ATTEMPTS = 2;
