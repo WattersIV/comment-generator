@@ -37,10 +37,14 @@ export async function POST(req: Request) {
 
 		let prompt;
 		let maxCharacters: number;
+		let minCharacters: number;
+		let targetCharacters: number;
 
 		if (activeTab === 'learning skills') {
-			const { minCharacters, maxCharacters: max } = LEARNING_SKILLS_PROMPT_CONFIG;
+			const { minCharacters: min, maxCharacters: max } = LEARNING_SKILLS_PROMPT_CONFIG;
 			maxCharacters = max;
+			minCharacters = min;
+			targetCharacters = Math.round((min + max) / 2);
 			prompt = `Refine this learning skill comment for clarity and specificity. Maintain a professional, encouraging tone.
 
 IMPORTANT RULES:
@@ -54,6 +58,8 @@ ${text}`;
 		} else {
 			const { idealCharacters, maxCharacters: max } = DEFAULT_PROMPT_CONFIG;
 			maxCharacters = max;
+			minCharacters = 0;
+			targetCharacters = idealCharacters;
 			prompt = `Refine this report card comment for clarity and specificity. Maintain a professional, encouraging tone.
 
 IMPORTANT RULES:
@@ -65,49 +71,64 @@ Comment to refine:
 ${text}`;
 		}
 
-		// Sanity ceiling against runaway generation only. The character limit is
-		// enforced by the retry loop below (via responseText.length), not here, and
-		// reasoning tokens count against this budget — so keep it generous enough to
-		// never truncate a legitimate comment.
+		// Sanity ceiling against runaway generation only. Length is steered by the
+		// loop below (via responseText.length), not here, and reasoning tokens count
+		// against this budget — so keep it generous enough to never truncate a comment.
 		const maxOutputTokens = 4000;
 
-		// Retry loop to enforce character limits
-		const MAX_ATTEMPTS = 2;
-		let responseText = '';
+		// Steer length toward the [minCharacters, maxCharacters] window. The model
+		// can't count characters, so we adjust textVerbosity per attempt: step down to
+		// 'low' when it runs long, up to 'high' when it runs short. The limit is a
+		// guideline (cutting text is worse than slightly overshooting), so we never
+		// truncate — if no attempt lands in range we return the closest one.
+		const MAX_ATTEMPTS = 3;
+		let verbosity: 'low' | 'medium' | 'high' = 'medium';
+		let correction = '';
+		let bestText = '';
+		let bestDistance = Infinity;
 
 		for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-			const currentPrompt =
-				attempt === 0
-					? prompt
-					: `${prompt}\n\nCRITICAL: Your previous response was ${responseText.length} characters, which exceeds the limit of ${maxCharacters}. You MUST shorten it significantly.`;
-
+			// temperature is unsupported on reasoning models. Low reasoning effort keeps
+			// latency down so multiple passes still fit in maxDuration.
 			const result = await generateText({
 				model: openai('gpt-5.5'),
 				system: OPENAI_SYSTEM_PROMPT,
-				prompt: currentPrompt,
+				prompt: prompt + correction,
 				maxOutputTokens,
-				// temperature is unsupported on reasoning models. Use low reasoning
-				// effort to keep latency down so the retry pass still fits in maxDuration.
-				providerOptions: { openai: { reasoningEffort: 'low' } }
+				providerOptions: { openai: { reasoningEffort: 'low', textVerbosity: verbosity } }
 			});
 
-			responseText = result.text;
+			const responseText = result.text;
+			const len = responseText.length;
+			const distance =
+				len > maxCharacters ? len - maxCharacters : len < minCharacters ? minCharacters - len : 0;
 
 			console.log(
-				`[chat] tab="${activeTab}" attempt=${attempt + 1} finishReason=${result.finishReason} ` +
-					`chars=${responseText.length} limit=${maxCharacters} usage=${JSON.stringify(result.usage)}`
+				`[chat] tab="${activeTab}" attempt=${attempt + 1} verbosity=${verbosity} ` +
+					`finishReason=${result.finishReason} chars=${len} range=${minCharacters}-${maxCharacters} ` +
+					`distance=${distance} usage=${JSON.stringify(result.usage)}`
 			);
 
-			if (responseText.length <= maxCharacters) {
-				break;
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				bestText = responseText;
 			}
 
-			console.log(
-				`Attempt ${attempt + 1}: Response was ${responseText.length} chars (limit: ${maxCharacters}). Retrying...`
-			);
+			if (distance === 0) {
+				break; // landed inside the window
+			}
+
+			// Steer the next attempt back toward the target length.
+			if (len > maxCharacters) {
+				verbosity = 'low';
+				correction = `\n\nYour previous response was ${len} characters, over the ${maxCharacters}-character guideline. Make it more concise — aim for about ${targetCharacters} characters — while preserving the required opening sentence and the " (SW)" suffix exactly.`;
+			} else {
+				verbosity = 'high';
+				correction = `\n\nYour previous response was ${len} characters, under the ${minCharacters}-character minimum. Add more specific, concrete detail — aim for about ${targetCharacters} characters — while preserving the required opening sentence and the " (SW)" suffix exactly.`;
+			}
 		}
 
-		return new Response(responseText, { status: 200 });
+		return new Response(bestText, { status: 200 });
 	} catch (error) {
 		console.error('[chat] generation failed:', error);
 		const message = error instanceof Error ? error.message : 'An unknown error occurred';
